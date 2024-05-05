@@ -3,9 +3,15 @@
 function love.load()
    -- Scale of the tiles
    scale = 50
+
+   last_clicked = nil
 end
 
 function love.update(dt)
+   -- Get mouse position
+   mouse = {}
+   mouse.x, mouse.y = love.mouse.getPosition()
+   
    -- Get window width and height
    window = {}
    window.x, window.y = love.window.getMode()
@@ -15,17 +21,17 @@ function love.update(dt)
    max = {}
    max.x = window.x / scale
    max.y = window.y / scale
+
+   -- Get clicked tile location
+   if love.mouse.isDown(1) then
+      last_clicked = {
+         x = math.floor(mouse.x / scale),
+         y = math.floor(mouse.y / scale)
+      }
+   end
 end
 
 function love.draw()
-   -- Get and show mouse position
-   local mouse = {}
-   mouse.x, mouse.y = love.mouse.getPosition()
-   
-   love.graphics.setColor(1, 1, 1)
-   love.graphics.print("Mouse: " .. mouse.x .. ", " .. mouse.y,
-                       10, window.y - 25)
-   
    -- Draw grid
    love.graphics.setColor(.2, .2, .2)
    
@@ -41,6 +47,21 @@ function love.draw()
          
          love.graphics.rectangle(draw_mode, i * scale, j * scale, scale, scale)
       end
+   end
+
+   -- Show mouse position
+   local mouse_message =
+      string.format("Mouse: (%d, %d)", mouse.x, mouse.y)
+   
+   love.graphics.setColor(1, 1, 1)
+   love.graphics.print(mouse_message, 10, window.y - 25)
+
+   -- Show last tile clicked
+   if last_clicked ~= nil then
+      local clicked_message = string.format("Clicked tile: (%d, %d)",
+                                            last_clicked.x, last_clicked.y)
+      
+      love.graphics.print(clicked_message, 10, window.y - 40)
    end
 end
 
